@@ -4,10 +4,10 @@ from django.core.exceptions import ValidationError
 username_validator = UnicodeUsernameValidator()
 
 
-def username_me_validator(value):
+def username_not_me_validator(value):
     """Запрещает использовать 'me' в качестве username."""
     if value.lower() == "me":
         raise ValidationError(
-            "Вы не можете использовать 'me' в качестве username."
+            'Вы не можете использовать "me" в качестве username.'
         )
     return value

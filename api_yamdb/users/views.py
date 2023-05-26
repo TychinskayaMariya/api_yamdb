@@ -8,6 +8,7 @@ class GetAuthTokenApiView(APIView):
     pass
 
 
-class SignUpApiView(APIView):
-    """CBV для добавления нового пользователя."""
-    pass
+@api_view(["POST"])
+def signup(request):
+    """Добавление нового пользователя."""
+    
