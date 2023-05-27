@@ -1,14 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .constants import (
-    USER,
-    MODERATOR,
-    ADMIN,
-    USERNAME_MAX_LEN,
-    EMAIL_MAX_LEN,
-    FIRST_NAME_MAX_LEN,
-    LAST_NAME_MAX_LEN,
-)
+from django.db import models
+
+from .constants import (ADMIN, EMAIL_MAX_LEN, FIRST_NAME_MAX_LEN,
+                        LAST_NAME_MAX_LEN, MODERATOR, ROLE_MAX_LEN, USER,
+                        USERNAME_MAX_LEN)
 from .validators import username_not_me_validator, username_validator
 
 
@@ -67,6 +62,7 @@ class User(AbstractUser):
     role = models.CharField(
         verbose_name='Роль пользователя',
         choices=ROLE_CHOICES,
+        max_length=ROLE_MAX_LEN,
         default='user',
         help_text='Выберите роль пользователя',
     )
@@ -81,7 +77,7 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN
+        return self.role == self.ADMIN or self.is_superuser
 
     class Meta:
         verbose_name = 'Пользователь'
