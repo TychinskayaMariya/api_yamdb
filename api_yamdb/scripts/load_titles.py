@@ -1,3 +1,23 @@
+"""
+1) pip install django-extensions;
+
+2) Добавьте строку 'django_extensions'в список INSTALLED_APPS в settings.py;
+
+3) python manage.py migrate - для создания таблиц в базе данных;
+
+4) python manage.py check - найдите ошибки и, при необходимости, исправьте их;
+
+5) python manage.py runscript load_titles - eсли все пойдет хорошо, вы увидите
+импортированные строки, напечатанные в консоли;
+
+6) python manage.py runserver
+
+7) http://127.0.0.1:8000/api/v1/titles/ - проверьте, как импортированные
+произведения теперь отображаются на этой странице.
+
+"""
+
+
 from api.models import Categories, Title, Genres, TitleGenres
 import csv
 
