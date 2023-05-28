@@ -5,7 +5,8 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAdminUser
 
 from reviews.models import Reviews, Comment
-from .serializers import ReviewsSerializer, CommentSerializer
+from .models import Categories, Genres, Title
+from .serializers import ReviewsSerializer, CommentSerializer, TitleSerializer, CategoriesSerializer, GenresSerializer
 from .permissions import IsAuthorOrReadOnly
 
 
@@ -39,3 +40,21 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, post=self.get_reviews())
+                      
+                        
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    permission_classes = (IsAdminUser,)
+
+
+class CategoriesViewSet(viewsets.ModelViewSet):
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
+    permission_classes = (IsAdminUser,)
+
+
+class GenresViewSet(viewsets.ModelViewSet):
+    queryset = Genres.objects.all()
+    serializer_class = GenresSerializer
+    permission_classes = (IsAdminUser,)
