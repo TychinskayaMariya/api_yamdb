@@ -4,9 +4,10 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAdminUser
 from reviews.models import Categories, Comment, Genres, Reviews, Title
 
-from .permissions import IsAuthorOrReadOnly
+from .permissions import IsAuthorOrReadOnly, AdminOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          GenresSerializer, ReviewsSerializer, TitleSerializer)
+                          GenresSerializer, ReviewsSerializer,
+                          CreateUpdateTitleSerializer, DemoTitlesSerializer)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -55,21 +56,27 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    """Вьюсет для произведения."""
+    """Вьюсет для произведения(ий)."""
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-    permission_classes = (IsAdminUser,)
+    serializer_class = CreateUpdateTitleSerializer
+    permission_classes = (AdminOrReadOnly,)
+
+    def get_serializer_class(self):
+        """Выбор нужного сериализатора."""
+        if self.action in ['list', 'retrieve']:
+            return DemoTitlesSerializer
+        return CreateUpdateTitleSerializer
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     """Вьюсет для категории."""
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AdminOrReadOnly,)
 
 
 class GenresViewSet(viewsets.ModelViewSet):
     """Вьюсет для жанра."""
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AdminOrReadOnly,)

@@ -6,26 +6,35 @@ from users.models import User
 class Categories(models.Model):
     """Модель для категорий."""
     name = models.CharField(
-        max_length=260,
+        max_length=256,
         unique=True
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(
+        max_length=50,
+        unique=True)
 
 
 class Genres(models.Model):
     """Модель для жанров."""
     name = models.CharField(
-        max_length=260,
+        max_length=256,
         unique=True
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(
+        max_length=50,
+        unique=True)
 
 
 class Title(models.Model):
     """Модель для произведений."""
-    category = models.ForeignKey(
-        Categories,
-        on_delete=models.SET_NULL,
+    name = models.CharField(
+        max_length=256,
+    )
+
+    year = models.IntegerField()
+
+    description = models.TextField(
+        blank=True,
         null=True
     )
 
@@ -34,11 +43,11 @@ class Title(models.Model):
         through='TitleGenres',
     )
 
-    name = models.CharField(
-        max_length=260,
+    category = models.ForeignKey(
+        Categories,
+        on_delete=models.SET_NULL,
+        null=True
     )
-
-    year = models.IntegerField()
 
 
 class TitleGenres(models.Model):
