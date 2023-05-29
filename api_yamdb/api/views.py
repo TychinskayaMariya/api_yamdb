@@ -1,9 +1,12 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from django_filters import rest_framework as myfilters
+
+from rest_framework import filters, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAdminUser
 from reviews.models import Categories, Comment, Genres, Reviews, Title
 
+from .filters import TitleFilter
 from .permissions import IsAuthorOrReadOnly, AdminOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenresSerializer, ReviewsSerializer,
@@ -60,6 +63,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = CreateUpdateTitleSerializer
     permission_classes = (AdminOrReadOnly,)
+    filter_backends = (myfilters.DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         """Выбор нужного сериализатора."""
@@ -73,6 +78,9 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     permission_classes = (AdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class GenresViewSet(viewsets.ModelViewSet):
@@ -80,3 +88,6 @@ class GenresViewSet(viewsets.ModelViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
     permission_classes = (AdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
