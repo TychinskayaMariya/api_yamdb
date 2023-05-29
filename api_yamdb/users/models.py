@@ -1,9 +1,10 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.mail import send_mail
 from django.db import models
 
-from .constants import (ADMIN, EMAIL_MAX_LEN, FIRST_NAME_MAX_LEN,
-                        LAST_NAME_MAX_LEN, MODERATOR, ROLE_MAX_LEN, USER,
-                        USERNAME_MAX_LEN)
+from .constants import (ADMIN, CONF_CODE_MAX_LEN, EMAIL_MAX_LEN,
+                        FIRST_NAME_MAX_LEN, LAST_NAME_MAX_LEN, MODERATOR,
+                        ROLE_MAX_LEN, USER, USERNAME_MAX_LEN)
 from .validators import username_not_me_validator, username_validator
 
 
@@ -67,17 +68,39 @@ class User(AbstractUser):
         help_text='Выберите роль пользователя',
     )
 
+    confirmation_code = models.CharField(
+        verbose_name='Код подтверждения',
+        blank=True,
+        max_length=CONF_CODE_MAX_LEN
+    )
+
+    def email_user(
+        self,
+        message,
+        subject='Регистрация',
+        from_email='yamdb@yandex.ru',
+        **kwargs
+    ):
+        send_mail(
+            subject,
+            message,
+            from_email,
+            [self.email],
+            fail_silently=False,
+            **kwargs
+        )
+
     @property
     def is_user(self):
-        return self.role == self.USER
+        return self.role == USER
 
     @property
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == MODERATOR
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser
+        return self.role == ADMIN or self.is_superuser
 
     class Meta:
         verbose_name = 'Пользователь'

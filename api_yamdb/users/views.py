@@ -1,4 +1,5 @@
 
+from api.permissions import IsAdmin
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status
 from rest_framework.decorators import action, api_view, permission_classes
@@ -8,7 +9,6 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from .models import User
-from .permissions import IsAdmin
 from .registration.confirmation import send_confirmation_code
 from .registration.token_generator import get_token_for_user
 from .serializers import (GetAuthTokenSerializer, SignUpSerializer,
@@ -60,15 +60,20 @@ class GetAuthTokenApiView(APIView):
         return Response(get_token_for_user(user), status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def sign_up(request):
-    """Добавление нового пользователя."""
+    """Добавление нового пользователя"""
     serializer = SignUpSerializer(data=request.data)
+
     serializer.is_valid(raise_exception=True)
-    email = serializer.data["email"]
-    username = serializer.data["username"]
+
+    email = serializer.data['email']
+    username = serializer.data['username']
+
     user, _ = User.objects.get_or_create(email=email, username=username)
+
     user.confirmation_code = send_confirmation_code(user)
     user.save()
+
     return Response(serializer.data, status=status.HTTP_200_OK)

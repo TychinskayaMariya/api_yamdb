@@ -5,4 +5,4 @@ def get_token_for_user(user):
     """Возвращает словарь вида {token: access_token}."""
     refresh = RefreshToken.for_user(user)
 
-    return {"token": str(refresh.access_token)}
+    return {'token': str(refresh.access_token)}

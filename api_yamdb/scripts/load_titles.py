@@ -18,8 +18,9 @@
 """
 
 
-from api.models import Categories, Title, Genres, TitleGenres
 import csv
+
+from api.models import Categories, Genres, Title, TitleGenres
 
 
 def run():

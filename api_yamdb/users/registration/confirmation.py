@@ -3,7 +3,7 @@ from django.contrib.auth.tokens import default_token_generator
 from ..models import User
 
 
-def send_confirmation_code(user: User) -> str:
+def send_confirmation_code(user: User):
     """Посылает письмо с кодом подтверждения на эл. почту пользователя.
     Возвращает строку с кодом подтверждения.
     """

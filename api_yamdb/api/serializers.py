@@ -1,12 +1,10 @@
 from rest_framework import serializers
-from .models import Categories, Genres, Title
 from rest_framework.relations import SlugRelatedField
-from reviews.models import Reviews, Comment
+from reviews.models import Categories, Comment, Genres, Reviews, Title
 
 
 class TitleSerializer(serializers.ModelSerializer):
-
-    """Переопределена категория для возможности записи"""
+    """Сериализатор для произведений."""
     category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Categories.objects.all(),
@@ -16,27 +14,24 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'category')
-        
+
 
 class CategoriesSerializer(serializers.ModelSerializer):
+    """Сериализатор для категории."""
     class Meta:
         model = Categories
-        fields = (
-            'name',
-            'slug'
-        )
+        fields = ('name', 'slug')
 
 
 class GenresSerializer(serializers.ModelSerializer):
+    """Сериализатор для жанра."""
     class Meta:
         model = Genres
-        fields = (
-            'name',
-            'slug'
-        )
-        
-        
+        fields = ('name', 'slug')
+
+
 class ReviewsSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели ревью."""
     author = SlugRelatedField(slug_field='username', read_only=True,
                               default=serializers.CurrentUserDefault())
 
@@ -46,6 +41,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели комментария."""
     author = SlugRelatedField(slug_field='username', read_only=True,
                               default=serializers.CurrentUserDefault())
 

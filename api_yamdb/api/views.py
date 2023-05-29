@@ -1,16 +1,21 @@
 from django.shortcuts import get_object_or_404
-
 from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAdminUser
+from reviews.models import Categories, Comment, Genres, Reviews, Title
 
-from reviews.models import Reviews, Comment
-from .models import Categories, Genres, Title
-from .serializers import ReviewsSerializer, CommentSerializer, TitleSerializer, CategoriesSerializer, GenresSerializer
 from .permissions import IsAuthorOrReadOnly
+from .serializers import (CategoriesSerializer, CommentSerializer,
+                          GenresSerializer, ReviewsSerializer, TitleSerializer)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    """
+    Получить список всех отзывов.
+    Добавление нового отзыва.
+    Получение отзыва по id.
+    Обновление отзыва по id.
+    """
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializer
     permission_classes = (IsAuthorOrReadOnly, IsAdminUser,)
@@ -27,6 +32,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    """
+    Получить список всех комментариев.
+    Добавление нового комментария к отзыву.
+    Получить комментарий по id.
+    Обновление комментария по id.
+    Удаление комментария.
+    """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthorOrReadOnly, IsAdminUser,)
@@ -40,21 +52,24 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, post=self.get_reviews())
-                      
-                        
+
+
 class TitleViewSet(viewsets.ModelViewSet):
+    """Вьюсет для произведения."""
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAdminUser,)
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
+    """Вьюсет для категории."""
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     permission_classes = (IsAdminUser,)
 
 
 class GenresViewSet(viewsets.ModelViewSet):
+    """Вьюсет для жанра."""
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
     permission_classes = (IsAdminUser,)
