@@ -2,33 +2,35 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from users.models import User
 
+from .constants import NAME_MAX_LEN, SLUG_MAX_LEN
+
 
 class Categories(models.Model):
     """Модель для категорий."""
     name = models.CharField(
-        max_length=256,
+        max_length=NAME_MAX_LEN,
         unique=True
     )
     slug = models.SlugField(
-        max_length=50,
+        max_length=SLUG_MAX_LEN,
         unique=True)
 
 
 class Genres(models.Model):
     """Модель для жанров."""
     name = models.CharField(
-        max_length=256,
+        max_length=NAME_MAX_LEN,
         unique=True
     )
     slug = models.SlugField(
-        max_length=50,
+        max_length=SLUG_MAX_LEN,
         unique=True)
 
 
 class Title(models.Model):
     """Модель для произведений."""
     name = models.CharField(
-        max_length=256,
+        max_length=NAME_MAX_LEN,
     )
 
     year = models.IntegerField()

@@ -1,7 +1,6 @@
 from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-
 from reviews.models import Categories, Comment, Genres, Review, Title
 
 

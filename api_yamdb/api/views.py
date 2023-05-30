@@ -1,16 +1,15 @@
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as myfilters
-
 from rest_framework import filters, viewsets
 from rest_framework.pagination import LimitOffsetPagination
-# from rest_framework.permissions import IsAdminUser
 from reviews.models import Categories, Comment, Genres, Review, Title
 
 from .filters import TitleFilter
-from .permissions import IsAuthorOrReadOnly, AdminOrReadOnly
+from .mixins import GetListCreateDeleteMixin
+from .permissions import AdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          GenresSerializer, ReviewSerializer,
-                          CreateUpdateTitleSerializer, DemoTitlesSerializer)
+                          CreateUpdateTitleSerializer, DemoTitlesSerializer,
+                          GenresSerializer, ReviewSerializer)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -73,7 +72,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         return CreateUpdateTitleSerializer
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class CategoriesViewSet(GetListCreateDeleteMixin):
     """Вьюсет для категории."""
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
@@ -83,7 +82,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
-class GenresViewSet(viewsets.ModelViewSet):
+class GenresViewSet(GetListCreateDeleteMixin):
     """Вьюсет для жанра."""
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer

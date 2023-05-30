@@ -10,7 +10,7 @@ def send_confirmation_code(user: User):
     confirmation_code = default_token_generator.make_token(user)
     email_message = (
         'Вы получили это письмо, потому что пытались зарегистрироваться \n'
-        'или обновить токен на ресурсе YamDB.\n'
+        'или обновить токен на ресурсе YAMDB.\n'
         f'Ваше имя пользователя: {user.username}\n'
         'Используйте этот код подтверждения:\n'
         f'"{confirmation_code}"'
