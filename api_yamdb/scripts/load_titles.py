@@ -1,4 +1,6 @@
 """
+При разворачивании проекта из "коробки" не требуется выполнение пунктов 1 и 2.
+
 1) pip install django-extensions;
 
 2) Добавьте строку 'django_extensions'в список INSTALLED_APPS в settings.py;
@@ -20,7 +22,7 @@
 
 import csv
 
-from api.models import Categories, Genres, Title, TitleGenres
+from reviews.models import Categories, Genres, Title, TitleGenres
 
 
 def run():
