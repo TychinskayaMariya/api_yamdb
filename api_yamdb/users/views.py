@@ -20,8 +20,10 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdmin,)
+    search_fields = ('username',)
     filter_backends = (filters.SearchFilter,)
     lookup_field = 'username'
+    http_method_names = ['get', 'post', 'delete', 'patch']
 
     @action(
         methods=['patch', 'get'],
@@ -36,7 +38,7 @@ class UserViewSet(ModelViewSet):
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
-        if request.method == 'PATCH':
+        if request.method == "PATCH":
             serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
