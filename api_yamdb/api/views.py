@@ -6,9 +6,9 @@ from reviews.models import Categories, Comment, Genres, Review, Title
 
 from .filters import TitleFilter
 from .mixins import GetListCreateDeleteMixin
-from .permissions import AdminOrReadOnly, IsAuthorOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          CreateUpdateTitleSerializer, DemoTitlesSerializer,
+                          CreateUpdateTitleSerializer, ShowTitlesSerializer,
                           GenresSerializer, ReviewSerializer)
 
 
@@ -61,14 +61,18 @@ class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для произведения(ий)."""
     queryset = Title.objects.all()
     serializer_class = CreateUpdateTitleSerializer
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (myfilters.DjangoFilterBackend,)
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
-        """Выбор нужного сериализатора."""
+        """
+        Выбор нужного сериализатора:
+        - создать произведение, обновить;
+        - показать рейтинг произведения.
+        """
         if self.action in ['list', 'retrieve']:
-            return DemoTitlesSerializer
+            return ShowTitlesSerializer
         return CreateUpdateTitleSerializer
 
 
@@ -76,7 +80,7 @@ class CategoriesViewSet(GetListCreateDeleteMixin):
     """Вьюсет для категории."""
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
@@ -86,7 +90,7 @@ class GenresViewSet(GetListCreateDeleteMixin):
     """Вьюсет для жанра."""
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'

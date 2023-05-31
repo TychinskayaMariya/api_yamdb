@@ -51,13 +51,14 @@ class CreateUpdateTitleSerializer(serializers.ModelSerializer):
         )
 
 
-class DemoTitlesSerializer(serializers.ModelSerializer):
-    """Сериализатор для произведений."""
+class ShowTitlesSerializer(serializers.ModelSerializer):
+    """Сериализатор показа рейтинга для произведений."""
     category = CategoriesSerializer(read_only=True)
     genre = GenresSerializer(many=True, required=False)
     rating = serializers.SerializerMethodField()
 
     class Meta:
+        "Класс дополнен полем 'rating'."
         model = Title
         fields = (
             'id',
@@ -70,6 +71,7 @@ class DemoTitlesSerializer(serializers.ModelSerializer):
         )
 
     def get_rating(self, instance):
+        "Метод расчета рейтинга произведения."
         avg = instance.reviews.aggregate(Avg('score'))
         rating = avg['score__avg']
         if rating:
