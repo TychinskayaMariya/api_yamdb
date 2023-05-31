@@ -61,6 +61,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для произведения(ий)."""
     queryset = Title.objects.all()
     serializer_class = CreateUpdateTitleSerializer
+    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (myfilters.DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -80,6 +81,7 @@ class CategoriesViewSet(GetListCreateDeleteMixin):
     """Вьюсет для категории."""
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
+    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -90,6 +92,7 @@ class GenresViewSet(GetListCreateDeleteMixin):
     """Вьюсет для жанра."""
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
+    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
