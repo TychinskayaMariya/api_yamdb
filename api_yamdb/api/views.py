@@ -15,9 +15,9 @@ from users.registration.confirmation import send_confirmation_code
 from users.registration.token_generator import get_token_for_user
 from .filters import TitleFilter
 from .mixins import GetListCreateDeleteMixin
-from .permissions import AdminOrReadOnly, IsAdmin, IsAuthorOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsAdmin, IsAuthorOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          CreateUpdateTitleSerializer, DemoTitlesSerializer,
+                          CreateUpdateTitleSerializer, ShowTitlesSerializer,
                           GenresSerializer, GetAuthTokenSerializer,
                           ReviewSerializer, SignUpSerializer,
                           UserProfileSerializer, UserSerializer)
