@@ -1,15 +1,26 @@
+from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as myfilters
-from rest_framework import filters, viewsets
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
-from reviews.models import Categories, Comment, Genres, Review, Title
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
+from reviews.models import Categories, Comment, Genres, Review, Title
+from users.models import User
+from users.registration.confirmation import send_confirmation_code
+from users.registration.token_generator import get_token_for_user
 from .filters import TitleFilter
 from .mixins import GetListCreateDeleteMixin
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from .permissions import AdminOrReadOnly, IsAdmin, IsAuthorOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          CreateUpdateTitleSerializer, ShowTitlesSerializer,
-                          GenresSerializer, ReviewSerializer)
+                          CreateUpdateTitleSerializer, DemoTitlesSerializer,
+                          GenresSerializer, GetAuthTokenSerializer,
+                          ReviewSerializer, SignUpSerializer,
+                          UserProfileSerializer, UserSerializer)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -97,3 +108,57 @@ class GenresViewSet(GetListCreateDeleteMixin):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
+
+
+class UserViewSet(ModelViewSet):
+    """Вьюсет модели User."""
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAdmin,)
+    search_fields = ('username',)
+    filter_backends = (filters.SearchFilter,)
+    lookup_field = 'username'
+    http_method_names = ['get', 'post', 'delete', 'patch']
+
+    @action(
+        methods=['patch', 'get'],
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+    )
+    def me(self, request):
+        serializer = UserProfileSerializer(
+            request.user, partial=True, data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+        if request.method == "PATCH":
+            serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetAuthTokenApiView(APIView):
+    """CBV для получения и обновления токена."""
+    def post(self, request):
+        serializer = GetAuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data.get('username')
+        confirmation_code = serializer.validated_data.get('confirmation_code')
+        user = get_object_or_404(User, username=username)
+        if not default_token_generator.check_token(user, confirmation_code):
+            return Response(
+                {'confirmation_code': ['Неверный код подтверждения']},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(get_token_for_user(user), status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def sign_up(request):
+    """Добавление нового пользователя"""
+    serializer = SignUpSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    email = serializer.data['email']
+    username = serializer.data['username']
+    user, _ = User.objects.get_or_create(email=email, username=username)
+    send_confirmation_code(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
