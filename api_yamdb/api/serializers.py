@@ -97,10 +97,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             if Review.objects.filter(author=reviewer,
                                      title_id=title_id).exists():
                 raise serializers.ValidationError('Повторное ревью запрещено')
-
-        if not 1 <= data['score'] <= 10:
-            raise serializers.ValidationError('Оценка от 1 до 10')
-
         return data
 
 
