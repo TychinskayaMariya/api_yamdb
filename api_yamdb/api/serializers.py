@@ -55,13 +55,14 @@ class CreateUpdateTitleSerializer(serializers.ModelSerializer):
         )
 
 
-class DemoTitlesSerializer(serializers.ModelSerializer):
-    """Сериализатор для произведений."""
+class ShowTitlesSerializer(serializers.ModelSerializer):
+    """Сериализатор показа рейтинга для произведений."""
     category = CategoriesSerializer(read_only=True)
     genre = GenresSerializer(many=True, required=False)
     rating = serializers.SerializerMethodField()
 
     class Meta:
+        "Класс дополнен полем 'rating'."
         model = Title
         fields = (
             'id',
@@ -74,6 +75,7 @@ class DemoTitlesSerializer(serializers.ModelSerializer):
         )
 
     def get_rating(self, instance):
+        "Метод расчета рейтинга произведения."
         avg = instance.reviews.aggregate(Avg('score'))
         rating = avg['score__avg']
         if rating:
@@ -99,10 +101,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             if Review.objects.filter(author=reviewer,
                                      title_id=title_id).exists():
                 raise serializers.ValidationError('Повторное ревью запрещено')
-
-        if not 1 <= data['score'] <= 10:
-            raise serializers.ValidationError('Оценка от 1 до 10')
-
         return data
 
 
