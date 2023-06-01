@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 
 from ..models import User
 
@@ -15,5 +17,10 @@ def send_confirmation_code(user: User):
         'Используйте этот код подтверждения:\n'
         f'"{confirmation_code}"'
     )
-    user.email_user(email_message)
-    return confirmation_code
+    send_mail(
+        'Регистрация',
+        email_message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False,
+    )

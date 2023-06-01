@@ -1,10 +1,9 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.mail import send_mail
 from django.db import models
 
-from .constants import (ADMIN, CONF_CODE_MAX_LEN, EMAIL_MAX_LEN,
-                        FIRST_NAME_MAX_LEN, LAST_NAME_MAX_LEN, MODERATOR,
-                        ROLE_MAX_LEN, USER, USERNAME_MAX_LEN)
+from .constants import (ADMIN, EMAIL_MAX_LEN, FIRST_NAME_MAX_LEN,
+                        LAST_NAME_MAX_LEN, MODERATOR, ROLE_MAX_LEN, USER,
+                        USERNAME_MAX_LEN)
 from .validators import username_not_me_validator, username_validator
 
 
@@ -67,28 +66,6 @@ class User(AbstractUser):
         default='user',
         help_text='Выберите роль пользователя',
     )
-
-    confirmation_code = models.CharField(
-        verbose_name='Код подтверждения',
-        blank=True,
-        max_length=CONF_CODE_MAX_LEN
-    )
-
-    def email_user(
-        self,
-        message,
-        subject='Регистрация',
-        from_email='yamdb@yandex.ru',
-        **kwargs
-    ):
-        send_mail(
-            subject,
-            message,
-            from_email,
-            [self.email],
-            fail_silently=False,
-            **kwargs
-        )
 
     @property
     def is_user(self):
